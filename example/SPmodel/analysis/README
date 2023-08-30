@@ -1,0 +1,51 @@
+**** LE4DNA Analysis Instructions ****
+
+To run this example LE4DNA analysis, simply copy all files from this directory into a new directory and run process_Pmodel.sh either as a shell script or a SLURM script. This script will have some comments indicating what the various commands do. The basic outline is the following, which are also indicated in the script itself:
+
+1. Load GROMACS and its prerequisites.
+
+2. Use the GROMACS command "trjconv" to convert the .xtc trajectory into a human readable .g96 format, saving only the trajectories of the atoms selected in the .ndx file. In this case, the selection contains only the atoms in the phosphates. 
+
+NOTE: trjconv may undergo significant revision soon. This command may have to be modified.
+
+3. Use the GROMACS command "sasa" to compute the solvent accessible surface area for the coarse graining units in the analysis, and save this as "SP_resarea.xvg". This file is required to run the calculation of friction coefficients.
+
+NOTE: You MUST use the SP_dsAXA.pdb file in this "sasa" command, otherwise GROMACS will think that each phosphate is part of two different monomers. 
+
+4. Copy the .g96 file into a file, "Ptmp", which contains only XYZ trajectory data with no formatting. Then convert this into a numpy array using numpy.loadtxt(). This can be quite slow for large trajectories.
+
+5. Create the tcfrun/ directory which is required to run a function in "process_Pmodel.py". Then run "process_Pmodel.py". This python code does most of the LE4DNA analysis by running the functions contained in "LE4DNA.py" and "LE4DNA_extras.py". The functions in "LE4DNA.py" are explained in more detail in the LE4PD code written by previous members of the Guenza Lab. 
+
+"LE4DNA_extras.py" adds some functionality to this analysis by: 
+
+(i)   computing a center of mass trajectory for a trajectory of identical coarse grain units.
+(ii)  saving the trajectories of individual coarse grain units in the tcfrun directory.
+(iii) running a revised calculation of the friction coefficient for each coarse grained unit (only for Pmodel and SPmodel so far).
+(iv)  converting a set of time correlation functions (in different files) into a single numpy array.
+(v)   creating a coarse grain ".pdb" file for a single frame of the center-of-mass trajectory. This was used to create "P_model.pdb", which is necessary to run the friction calculation. 
+
+6. Copy "tcf.sh", "tcfint_DUMMY.f", "tcf_DUMMY.pbs", "move.sh", and "protname.txt" into the tcfrun/ directory. These codes will compute the tcfs of bond autocorrelation from the simulation trajectory. "move.sh" will clean up this directory and remove the tcf of the nonexistent bond between DNA strands and change the names of each tcf to match the tcfs produced by the LE4DNA analysis.
+
+7. Create some requisite files to run the calculation of the theoretical tcfs of bond autocorrelation. Then compile and run the Fortran code to calculate these, called "m1calc.f". The outputs of this code are called "m1_i", where i indexes the appropriate bond.
+
+NOTE: m1calc.f can take a long time (several minutes) for longer trajectories since it is not optimized. It may be prudent to move this calculation into a new script and run it separately after the main analysis is done. 
+
+8. Clean up the analysis directory by moving numpy arrays into a new directory. Make a directory called tcfdata/ in which tcf data will be stored. Move the output of m1calc.f into tcfdata/.
+
+9. Create the "LE4DNA_OUTPUT" file which does nothing more than tell us that the script reached the end with no errors, and tells us what to do next. 
+
+
+Some additional comments:
+
+- The m1calc.f code is extremely useful and, with minor modifications, can be used to calculate several other quantites of interest.
+
+- The P_model.pdb is not a real .pdb file. An application like PyMol will read it, but the model it creates might be nonsense.
+
+- The code SPmodel_TCF_plots.py will generate a pdf of plots of the time correlation functions in the directory /tcfdata. This will only run if the time correlation functions have already been computed.
+
+
+
+
+*****************************************************************
+For questions, email Jeremy Welsh-Kavan at jeremy@micromelody.net
+*****************************************************************

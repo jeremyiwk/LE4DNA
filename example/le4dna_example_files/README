@@ -1,0 +1,35 @@
+LE4DNA Analysis Files
+
+**** This directory should not be modified without first ensuring that the added, modified, or removed files do not interfere with the codes below **** 
+
+This directory contains the following files which are required or helpful for the LE4DNA analysis. 
+
+after_rot_example.xtc
+SP_dsAXA.pdb
+dsAXA.pdb
+SP_index.ndx
+LE4DNA_extras.py
+LE4DNA.py
+m1calc.f
+tcfint_DUMMY.f
+tcf_DUMMY.pbs
+tcf.sh
+protname.txt
+m1.pbs
+README
+
+Files are consolidated here for ease of transport.
+
+More detailed descriptions of how these files are used can be found in the analysis directories in the Pmodel and SPmodel directories.
+
+The main files of interest are the .xtc file, the LE4DNA.py and LE4DNA_extras.py files, and the .pdb files.
+
+The .xtc file must be a MD simulation trajectory file in the .xtc format, with periodic boundary conditions, center of mass translations, and rotations all removed.
+
+The LE4DNA.py and LE4DNA_extras.py files contain Python functions which are crucial or useful for the LE4DNA analysis.
+
+The dsAXA.pdb and SP_dsAXA.pdb file are .pdb structure files containing the structure for a strand of double-stranded DNA, 48 base pairs long. dsAXA.pdb and SP_dsAXA.pdb differ slightly in indexing. In the SP_dsAXA.pdb, each phosphate is contained in only one monomer. Whereas, in dsAXA.pdb the O3' atom is not on the same monomer as the rest of the phosphate. This is necessary when computing the solvent accessible surface area (SASA) of collections of atoms (using the GROMACS "sasa" command), since the output of gmx_mpi sasa lists the SASA by monomer index.
+
+*****************************************************************
+For questions, email Jeremy Welsh-Kavan at jeremy@micromelody.net
+*****************************************************************

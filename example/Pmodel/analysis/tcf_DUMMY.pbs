@@ -1,0 +1,17 @@
+#!/bin/bash -l
+#SBATCH --job-name="tcf_DUMMY"
+#SBATCH -A uoo104
+#SBATCH --output="./tcfDUMMY.log"
+#SBATCH --partition=shared
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --export=ALL
+#SBATCH -t 24:00:00
+
+i=DUMMY
+j=$((${i}+1))
+sed -i "s#dummy#${i}#g" tcfint_DUMMY.f
+sed -i "s#spam#${i}#g" tcfint_DUMMY.f
+sed -i "s#eggs#${j}#g" tcfint_DUMMY.f
+gfortran tcfint_DUMMY.f -o DUMMY.exe
+./DUMMY.exe
